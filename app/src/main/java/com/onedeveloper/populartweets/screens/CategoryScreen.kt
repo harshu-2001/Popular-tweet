@@ -1,17 +1,22 @@
 package com.onedeveloper.populartweets.screens
 
-import android.graphics.fonts.FontFamily
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,28 +30,67 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.ResourceFont
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.onedeveloper.populartweets.R
 import com.onedeveloper.populartweets.viewmodels.CategoryViewModel
 
 @Composable
-fun CategoryScreen( onClick: (category: String) -> Unit) {
+fun CategoryScreen(onClick: (category: String) -> Unit) {
     val categoryViewModel: CategoryViewModel = hiltViewModel()
     val categories: State<List<String>> = categoryViewModel.categories.collectAsState()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.SpaceAround
-    ) {
-        items(categories.value.distinct()) {
-            CategoryItem(category = it,onClick)
+    if (categories.value.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Please wait ....",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontStyle = FontStyle(R.font.montserrat_regular)
+                )
+                CircularProgressIndicator(color = Color.Cyan)
+            }
         }
+    } else {
+        Text(
+            text = "Tweets \uD835\uDD4F \uD83D\uDCC3",
+            color = Color.Black,
+            style = MaterialTheme.typography.headlineLarge,
+            fontStyle = FontStyle(R.font.montserrat_regular),
+            modifier = Modifier.padding(10.dp)
+        )
+
+        Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
+
+            Column(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(
+                    text = "Choose Category",
+                    color = Color.Black,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontStyle = FontStyle(R.font.montserrat_regular)
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
+                    items(categories.value.distinct()) {
+                        CategoryItem(category = it, onClick)
+                    }
+                }
+            }
+        }
+
     }
+
 }
 
 
